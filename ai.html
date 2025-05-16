@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Voice Assistant</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .assistant-status {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 20px;
+      background: rgba(123, 63, 228, 0.9);
+      border-radius: 10px;
+      color: white;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      min-width: 200px;
+    }
+
+    .status-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.5; }
+      50% { transform: scale(1.05); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.5; }
+    }
+
+    .status-text {
+      font-size: 16px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div><strong style="color: #7b3fe4; font-size: 50px;">EDULIFE</strong></div>
+    <div id="first"></div>
+    <nav>
+      <a href="#first">Home</a>
+      <a href="index.html">AI Assistant</a>
+      <a href="#feature">Featured</a>
+      <a href="#tool">Tools</a>
+      <a href="#">Pages</a>
+    </nav>
+    <div class="buttons">
+      <a href="index.html" class="start-btn">Get Started</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>Unlocking The Power Of AI</h1>
+    <div id="feature"></div>
+    <div class="cta-buttons">
+      <a href="javascript:void(0)" class="start-btn" onclick="startJarvis()">Get Started</a>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="section-title">WriteBot AI Feature List</div>
+    <div class="feature-grid">
+      <div class="card">
+        <h3>Video/Music play</h3>
+        <p>Plays music videos on command, allowing users to enjoy their favorite songs and artists effortlessly.</p>
+      </div>
+      <div class="card">
+        <h3>Quick Answers to Question</h3>
+        <p>Provides quick answers to questions using internet search and knowledge databases.</p>
+      </div>
+      <div class="card">
+        <h3>GPT-4 Integration</h3>
+        <p>Utilize the OpenAI API to send user queries to GPT-4 and process the responses, allowing for a conversational experience.</p>
+      </div>
+      <div class="card">
+        <h3>All Basic Tasks</h3>
+        <p>This summary encapsulates the core functionalities of your voice assistant in a straightforward manner.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tools">
+    <div class="section-title" id="feature">WriteBot AI Tools</div>
+    <div id="tool"></div>
+    <div class="tools-grid">
+      <a href="index.html"><div class="card ai">
+        <h3>Advanced Dashboard</h3>
+        <p>Track insights, usage, and manage your AI tools in one place.</p>
+      </div></a>
+      <a href="calorie.html"><div class="card calorie">
+        <h3>Calorie Counter</h3>
+        <p>Plays music videos on command, allowing users to enjoy their favorite songs and artists effortlessly.</p>
+      </div></a>
+      <a href="bmi.html"><div class="card bmi">
+        <h3>BMI Calculator</h3>
+        <p>Calculates and provides the Body Mass Index (BMI) based on user-provided height and weight, offering insights into their weight status.</p>
+      </div></a>
+      <a href="exercise.html"><div class="card exercise">
+        <h3>Exercise Suggestion</h3>
+        <p>The exercise suggestion feature recommends workouts based on the user's desired calorie intake or expenditure to help achieve their fitness goals.</p>
+      </div></a>
+    </div>
+  </section>
+
+  <!-- Add this before the footer -->
+  <div class="assistant-status" id="assistantStatus">
+    <div class="status-icon"></div>
+    <div class="status-text">Initializing...</div>
+  </div>
+
+  <footer>
+    &copy; EDULIFE 2025. All rights reserved.
+  </footer>
+
+  <script src="/eel.js"></script>
+  <script>
+    // Status management
+    const statusElement = document.getElementById('assistantStatus');
+    let currentStatus = '';
+
+    function showStatus(message) {
+      if (!statusElement) return;
+      
+      const statusText = statusElement.querySelector('.status-text');
+      if (!statusText) return;
+
+      currentStatus = message;
+      statusText.textContent = message;
+      statusElement.style.display = 'flex';
+      console.log('Status updated:', message);
+    }
+
+    function hideStatus() {
+      if (!statusElement) return;
+      statusElement.style.display = 'none';
+      currentStatus = '';
+      console.log('Status hidden');
+    }
+
+    // Expose functions to Python
+    eel.expose(showListening);
+    function showListening() {
+      showStatus('Listening...');
+    }
+
+    eel.expose(showThinking);
+    function showThinking() {
+      showStatus('Thinking...');
+    }
+
+    eel.expose(showSpeaking);
+    function showSpeaking() {
+      showStatus('Speaking...');
+    }
+
+    eel.expose(hideInterface);
+    function hideInterface() {
+      hideStatus();
+    }
+
+    // Start Jarvis
+    let isJarvisRunning = false;
+
+    async function startJarvis() {
+      if (isJarvisRunning) {
+        console.log('Jarvis is already running');
+        return;
+      }
+
+      try {
+        isJarvisRunning = true;
+        console.log("Starting Jarvis...");
+        showStatus('Starting...');
+
+        while (true) {
+          const result = await eel.start_jarvis()();
+          console.log("Jarvis result:", result);
+
+          if (result.status === "error") {
+            console.error(result.message);
+            hideStatus();
+            break;
+          }
+
+          // Keep the interface visible
+          if (currentStatus !== 'Listening...') {
+            showStatus('Listening...');
+          }
+
+          // Small delay before next iteration
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        hideStatus();
+      } finally {
+        isJarvisRunning = false;
+      }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log("Page loaded, initializing...");
+      // Show initial status
+      showStatus('Ready to start...');
+    });
+
+    // Keyboard shortcut
+    document.addEventListener('keydown', (event) => {
+      if (event.key.toLowerCase() === 'j') {
+        startJarvis();
+      }
+    });
+  </script>
+</body>
+</html>
